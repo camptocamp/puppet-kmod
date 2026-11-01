@@ -79,6 +79,29 @@ describe 'kmod' do
     end
   end
 
+  context 'with one of several options set to absent' do
+    before(:all) do
+      on(default, "echo 'options bonding mode=1 miimon=100' > /etc/modprobe.d/bonding.conf")
+    end
+
+    it_behaves_like 'an idempotent resource' do
+      let(:manifest) do
+        <<~PUPPET
+          kmod::option { 'bonding mode':
+            ensure => absent,
+            module => 'bonding',
+            option => 'mode',
+            value  => '1',
+          }
+        PUPPET
+      end
+    end
+
+    describe file('/etc/modprobe.d/bonding.conf') do
+      its(:content) { is_expected.to match %r{^options bonding miimon=100$} }
+    end
+  end
+
   # Use a module the host already has loaded, since containers cannot load anything
   context 'with kmod::load' do
     # EL ships /etc/modules-load.d in systemd-udev which is missing from the container

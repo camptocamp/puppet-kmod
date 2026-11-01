@@ -52,7 +52,15 @@ define kmod::setting (
     }
 
     'absent': {
-      $changes = "rm ${category}[. = '${module}']"
+      # Lines like `options foo a=1 b=2` hold several settings, so only remove ours
+      if $category == 'options' and $option {
+        $changes = [
+          "rm ${category}[. = '${module}']/${option}",
+          "rm ${category}[. = '${module}'][count(*[label() != '#comment']) = 0]",
+        ]
+      } else {
+        $changes = "rm ${category}[. = '${module}']"
+      }
     }
 
     default: { fail ( "unknown ensure value ${ensure}" ) }
