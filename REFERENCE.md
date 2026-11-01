@@ -11,7 +11,7 @@
 ### Defined types
 
 * [`kmod::alias`](#kmod--alias): Manage kernel module aliases
-* [`kmod::blacklist`](#kmod--blacklist): Set a kernel module as blacklisted.
+* [`kmod::blacklist`](#kmod--blacklist): Set a kernel module as blacklisted and prevent it from being loaded.
 * [`kmod::install`](#kmod--install): Set a kernel module as installed
 * [`kmod::load`](#kmod--load): Manage a kernel module in /etc/modules.
 * [`kmod::option`](#kmod--option): Manage kernel module options
@@ -209,7 +209,8 @@ Default value: `$name`
 
 ### <a name="kmod--blacklist"></a>`kmod::blacklist`
 
-Set a kernel module as blacklisted.
+Besides the `blacklist` entry, an `install <module> /bin/false` entry is added
+so the module cannot be loaded manually or as a dependency of another module.
 
 #### Examples
 

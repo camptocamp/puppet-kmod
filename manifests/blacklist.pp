@@ -1,4 +1,7 @@
-# @summary Set a kernel module as blacklisted.
+# @summary Set a kernel module as blacklisted and prevent it from being loaded.
+#
+# Besides the `blacklist` entry, an `install <module> /bin/false` entry is added
+# so the module cannot be loaded manually or as a dependency of another module.
 #
 # @param ensure State of the setting
 # @param file File to manage
@@ -16,5 +19,14 @@ define kmod::blacklist (
     module   => $name,
     file     => $file,
     category => 'blacklist',
+  }
+
+  kmod::setting { "kmod::blacklist ${title} install":
+    ensure   => $ensure,
+    module   => $name,
+    file     => $file,
+    category => 'install',
+    option   => 'command',
+    value    => '/bin/false',
   }
 }
