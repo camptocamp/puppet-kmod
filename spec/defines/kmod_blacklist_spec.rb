@@ -51,6 +51,28 @@ describe 'kmod::blacklist', type: :define do
                   'module' => 'foo',
                   'file' => '/bar/baz')
         }
+
+        it {
+          is_expected.to contain_kmod__setting('kmod::blacklist foo install')
+            .with('ensure' => 'absent',
+                  'category' => 'install',
+                  'module' => 'foo',
+                  'file' => '/bar/baz')
+        }
+      end
+
+      context 'when using defaults' do
+        it { is_expected.to compile.with_all_deps }
+
+        it {
+          is_expected.to contain_kmod__setting('kmod::blacklist foo install')
+            .with('ensure' => 'present',
+                  'category' => 'install',
+                  'module' => 'foo',
+                  'option' => 'command',
+                  'value' => '/bin/false',
+                  'file' => '/etc/modprobe.d/blacklist.conf')
+        }
       end
 
       context 'when file permissions are specified' do

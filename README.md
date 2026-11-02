@@ -79,9 +79,9 @@ Params:
 
 ### kmod::blacklist
 
-Manages modprobe blacklist entries. Blacklist entries prevents module aliases from being used,
-but would not prevent the module from being loaded.
-To prevent a module from being loaded use `kmod::install`
+Manages modprobe blacklist entries. A blacklist entry only prevents module aliases from being
+used, so an `install <module> /bin/false` entry is also added to the same file to prevent the
+module from being loaded manually or as a dependency of another module.
 
 ```puppet
   kmod::blacklist { 'foo': }

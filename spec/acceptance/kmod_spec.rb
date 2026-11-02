@@ -27,6 +27,7 @@ describe 'kmod' do
 
     describe file('/etc/modprobe.d/blacklist.conf') do
       its(:content) { is_expected.to match %r{^blacklist pcspkr$} }
+      its(:content) { is_expected.to match %r{^install pcspkr /bin/false$} }
     end
 
     describe file('/etc/modprobe.d/dccp.conf') do
