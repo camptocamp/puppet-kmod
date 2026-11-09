@@ -42,6 +42,21 @@ describe 'kmod::setting', type: :define do
         }
       end
 
+      context 'remove an option' do
+        let(:params) { default_params.merge(ensure: 'absent', category: 'options', option: 'mode', value: '1') }
+
+        it {
+          is_expected.to contain_augeas('kmod::setting foo foo')
+            .with_changes(["rm options[. = 'foo']/mode", "rm options[. = 'foo'][count(*[label() != '#comment']) = 0]"])
+        }
+      end
+
+      context 'remove an alias' do
+        let(:params) { default_params.merge(ensure: 'absent', category: 'alias', option: 'modulename', value: 'tango') }
+
+        it { is_expected.to contain_augeas('kmod::setting foo foo').with_changes("rm alias[. = 'foo']") }
+      end
+
       context 'add an install with file permissions specified' do
         let(:params) do
           default_params.merge(
