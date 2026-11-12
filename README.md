@@ -33,7 +33,7 @@ This module has five main defined types:
 
 ### kmod::load
 
-Loads a module using modprobe and manages persistent modules in /etc/sysconfig/modules
+Loads a module using modprobe and makes it persistent in `/etc/modules-load.d/<name>.conf`
 
 ```puppet
   kmod::load { 'mymodule': }
@@ -147,6 +147,40 @@ kmod::list_of_options:
     option: 'mode'
     value: '1'
 ```
+
+## Facts
+
+### kmods
+
+A hash of the loaded kernel modules that are declared by puppet via
+`kmod::load`, keyed by module name. Each entry lists the module parameters
+readable from sysfs and the modules using it:
+
+```
+kmods => {
+  br_netfilter => {
+    parameters => {},
+    used_by => ['nf_conntrack']
+  },
+  overlay => {
+    parameters => {
+      check_copy_up => 'N',
+      redirect_dir => 'Y'
+    },
+    used_by => []
+  }
+}
+```
+
+Only modules listed in `/etc/modules-load.d/*.conf` files written by
+`kmod::load` are considered. A declared module that is not currently loaded is
+left out. Module names use the kernel spelling, so `kmod::load { 'br-netfilter': }`
+shows up as `br_netfilter`.
+
+Earlier releases reported every loaded module from `/sys/module` regardless of
+how it was loaded. Code that looked up modules loaded by the initramfs, a
+container runtime or anything else outside `kmod::load` must no longer rely on
+this fact.
 
 ## Contributing
 
